@@ -14,6 +14,7 @@ public class Recursive2 implements Iterable<List<Integer>> {
     Recursive2(int maxItems) {
         this.MAX_ITEMS = maxItems;
         this.MAX_PERMUTE = factorial(maxItems);
+        state = new Integer[] {0,0,0,0};
         init();
     }
 
@@ -35,9 +36,19 @@ public class Recursive2 implements Iterable<List<Integer>> {
         System.out.println(i);
     }
 
+    /**
+     * типа хранить тут состояние итераций массивов
+     */
+    // private Stack<Integer> stack = new Stack<>();
+    private Integer[] state;
+    private int recursiveCall = -1;
+
     private List<Deque<Integer>> permute(List<Integer> array) {
+            recursiveCall++;
             List<Deque<Integer>> res = new ArrayList<Deque<Integer>>();
-            for (Integer item : array) {
+            for (int i = state[recursiveCall]; i < array.size(); i++) {
+                Integer item = array.get(i);
+                state[recursiveCall] = i;
                 if(array.size() == 1) {
                     Deque<Integer> list = new ArrayDeque<>();
                     list.add(item);
@@ -47,12 +58,16 @@ public class Recursive2 implements Iterable<List<Integer>> {
                 List<Integer> arrayWithOutItem = new ArrayList<Integer>(array);
                 arrayWithOutItem.remove(item);
                 List<Deque<Integer>> permuted = permute(arrayWithOutItem);
-                for (Deque<Integer> permute : permuted) {
+
+                for(int j = 0; j < permuted.size(); j++) {
+                    Deque<Integer> permute = permuted.get(j);
                     permute.push(item);
                     res.add(permute);
                 }
+                recursiveCall--;
             }
             return res;
+
     }
 
     @Override
